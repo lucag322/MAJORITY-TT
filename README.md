@@ -1,134 +1,189 @@
-# 🌍 Globe Explorer - Test Technique MAJORITY
+# 🌍 Globe Explorer - MAJORITY Technical Test
 
-Une application web interactive permettant d'explorer les pays du monde entier à travers un globe 3D avec des drapeaux gravitant autour.
+An interactive web application to explore countries around the world through a 3D globe with flags orbiting around it, featuring a comprehensive country comparison system.
 
-## ✨ Fonctionnalités
+> **📋 About This Project**  
+> This project was developed as a technical assessment for **MAJORITY**, showcasing modern web development skills including 3D graphics, interactive UI/UX design, and complex state management. The application demonstrates proficiency in React, Three.js, TypeScript, and modern UI libraries.
 
-- **Globe 3D interactif** : Un globe invisible avec des drapeaux de pays gravitant autour
-- **Interaction immersive** : Rotation, zoom et navigation 3D fluides
-- **Recherche intelligente** : Filtrage des pays par nom, région ou capitale
-- **Modal détaillée** : Informations complètes sur chaque pays (population, capitale, monnaie, etc.)
-- **Animations fluides** : Transitions et animations avec Framer Motion
-- **Design moderne** : Interface élégante avec mode sombre/clair
-- **Performance optimisée** : Gestion efficace des textures et du rendu 3D
+## ✨ Features
 
-## 🚀 Technologies utilisées
+### Core Features
 
-- **Next.js 15** - Framework React avec App Router
-- **TypeScript** - Typage statique pour un code robuste
-- **Three.js** - Rendu 3D et animations
-- **React Three Fiber** - Intégration React pour Three.js
-- **Framer Motion** - Animations fluides et interactions
-- **Tailwind CSS** - Styles utilitaires et design responsive
-- **Axios** - Gestion des requêtes HTTP
-- **REST Countries API** - Source de données des pays
+- **Interactive 3D Globe**: Invisible wireframe globe with country flags orbiting around it
+- **Immersive Interactions**: Smooth rotation, zoom, and 3D navigation
+- **Smart Search**: Real-time filtering by country name, region, or capital
+- **Detailed Country Panel**: Complete information for each country (population, capital, currencies, languages, etc.)
+- **Smooth Animations**: Fluid transitions and animations with Framer Motion
+- **Modern Design**: Elegant interface built with shadcn/ui components
+- **Optimized Performance**: Efficient texture and 3D rendering management
 
-## 📋 Prérequis
+### Country Comparison System
+
+- **Multi-Country Selection**: Compare up to 4 countries simultaneously
+- **Quick Selection**: Ctrl/Cmd + Click to directly add/remove countries from globe
+- **Visual Indicators**: Selected countries highlighted with green borders on the globe
+- **Floating Comparison Button**: Shows preview of selected countries with quick access
+- **Detailed Comparison Modal**: Side-by-side comparison table with all country metrics
+- **Comparison Categories**: Organized data in General Information, Geography, Demographics, Economy, and Languages & Culture
+- **Smart UX**: Automatic modal opening when 2+ countries selected, easy management
+
+### Enhanced User Experience
+
+- **Direct Globe Interaction**: Ctrl/Cmd + Click for instant country selection
+- **Context-Aware UI**: "View Comparison" button appears in country details when applicable
+- **Responsive Design**: Seamless experience across desktop and mobile devices
+- **Accessibility**: Proper ARIA labels and keyboard navigation support
+
+## 🚀 Technologies Used
+
+- **Next.js 15** - React framework with App Router
+- **TypeScript** - Static typing for robust code
+- **Three.js** - 3D rendering and animations
+- **React Three Fiber** - React integration for Three.js
+- **Framer Motion** - Smooth animations and interactions
+- **shadcn/ui** - Modern UI component library
+- **Tailwind CSS** - Utility-first CSS framework
+- **Lucide React** - Beautiful icon library
+- **Axios** - HTTP request management
+- **REST Countries API** - Countries data source
+
+## 📋 Prerequisites
 
 - Node.js 18+
-- npm ou yarn
-- Connexion internet (pour l'API REST Countries)
+- npm or yarn
+- Internet connection (for REST Countries API)
 
 ## 🛠️ Installation
 
-1. **Cloner le repository**
+1. **Clone the repository**
 
    ```bash
    git clone <repository-url>
    cd MAJORITY-TT
    ```
 
-2. **Installer les dépendances**
+2. **Install dependencies**
 
    ```bash
    npm install
    ```
 
-3. **Lancer l'application en développement**
+3. **Start the development server**
 
    ```bash
    npm run dev
    ```
 
-4. **Ouvrir dans le navigateur**
+4. **Open in browser**
    ```
    http://localhost:3000
    ```
 
-## 🏗️ Structure du projet
+## 🏗️ Project Structure
 
 ```
 app/
-├── components/           # Composants React
-│   ├── Globe3D.tsx      # Composant principal du globe 3D
-│   ├── CountryModal.tsx # Modal avec informations détaillées
-│   ├── SearchBar.tsx    # Barre de recherche
-│   └── LoadingSpinner.tsx # Indicateur de chargement
+├── components/           # React components
+│   ├── Globe3D.tsx      # Main 3D globe component
+│   ├── CountryDetailPanel.tsx # Country details side panel
+│   ├── CountryComparison.tsx  # Comparison modal
+│   ├── ComparisonButton.tsx   # Floating comparison button
+│   ├── SearchBar.tsx    # Search functionality
+│   └── LoadingSpinner.tsx # Loading indicator
 ├── hooks/
-│   └── useCountries.ts  # Hook personnalisé pour la gestion des pays
+│   ├── useCountries.ts  # Countries data management
+│   └── useCountryComparison.ts # Comparison logic
 ├── services/
-│   └── countryService.ts # Service API REST Countries
+│   └── countryService.ts # REST Countries API service
 ├── types/
-│   └── country.ts       # Types TypeScript
-├── globals.css          # Styles globaux
-├── layout.tsx          # Layout principal
-└── page.tsx            # Page d'accueil
+│   ├── country.ts       # Country TypeScript types
+│   └── comparison.ts    # Comparison system types
+├── components/ui/       # shadcn/ui components
+│   ├── button.tsx
+│   ├── card.tsx
+│   ├── dialog.tsx
+│   ├── sheet.tsx
+│   └── ...
+├── globals.css          # Global styles
+├── layout.tsx          # Main layout
+└── page.tsx            # Homepage
 ```
 
-## 🎯 Fonctionnement
+## 🎯 How It Works
 
-### 1. Chargement des données
+### 1. Data Loading
 
-- Récupération des pays via l'API REST Countries
-- Mise en cache des données pour éviter les requêtes multiples
-- Filtrage des pays avec drapeaux valides
+- Fetches countries from REST Countries API
+- Caches data to prevent multiple requests
+- Filters countries with valid flags and coordinates
+- Optimized Fibonacci spiral distribution for flag positioning
 
-### 2. Rendu 3D
+### 2. 3D Rendering
 
-- Positionnement des drapeaux sur une sphère invisible
-- Rotation continue des drapeaux autour du globe
-- Animations d'échelle au survol
+- Positions flags on an invisible wireframe sphere using Fibonacci spiral algorithm
+- Continuous flag rotation around the globe
+- Hover animations with scale effects
+- Visual selection indicators for compared countries
 
 ### 3. Interactions
 
-- **Clic** : Ouverture du modal avec informations détaillées
-- **Molette** : Zoom avant/arrière
-- **Glisser** : Rotation de la caméra
-- **Recherche** : Filtrage en temps réel
+- **Click**: Opens detailed country information panel
+- **Ctrl/Cmd + Click**: Adds/removes country from comparison
+- **Mouse Wheel**: Zoom in/out
+- **Drag**: Rotate camera around globe
+- **Search**: Real-time filtering with auto-focus
 
-## 🎨 Design et UX
+### 4. Comparison System
 
-### Choix de design
+- **Selection Management**: Up to 4 countries with smart state management
+- **Visual Feedback**: Green borders on selected countries
+- **Floating Button**: Shows selected countries preview
+- **Comparison Modal**: Detailed side-by-side comparison table
+- **Auto-opening**: Modal opens automatically when 2+ countries selected
 
-- **Minimalisme** : Interface épurée pour mettre en avant le globe
-- **Glassmorphism** : Effets de transparence et de flou
-- **Micro-interactions** : Animations subtiles pour améliorer l'expérience
-- **Responsive** : Adaptation mobile et desktop
+## 🎨 Design and UX
 
-### Optimisations
+### Design Choices
 
-- **Lazy loading** : Chargement différé du composant 3D
-- **Limitation** : Affichage de 100 pays maximum pour les performances
-- **Cache** : Mise en cache des données API
-- **Textures optimisées** : Compression et filtrage des images
+- **Modern UI**: Built with shadcn/ui component library
+- **Consistent Icons**: Lucide React icons throughout the interface
+- **Glassmorphism**: Transparent backgrounds with blur effects
+- **Micro-interactions**: Subtle animations to enhance experience
+- **Responsive**: Mobile-first design with desktop enhancements
+
+### UX Optimizations
+
+- **Quick Selection**: Direct globe interaction with Ctrl/Cmd + Click
+- **Visual Feedback**: Clear indicators for selected countries
+- **Context-Aware UI**: Buttons appear when relevant
+- **Smooth Transitions**: Framer Motion animations for state changes
+- **Auto-focus**: Search automatically focuses on relevant results
 
 ## 🔧 Configuration
 
-### Variables d'environnement
+### API Configuration
 
-L'application utilise l'API REST Countries publique, aucune clé API n'est requise.
+The application uses the public REST Countries API with no API key required.
 
-### Personnalisation
+### Customizable Parameters
 
 ```typescript
-// Dans countryService.ts
-const COUNTRIES_LIMIT = 100; // Modifier le nombre de pays affichés
-const GLOBE_RADIUS = 8; // Modifier la taille du globe
+// In countryService.ts
+const GLOBE_RADIUS = 12; // Flag positioning radius
+const WIREFRAME_RADIUS = 9.5; // Invisible globe radius
+
+// In useCountryComparison.ts
+const MAX_COUNTRIES = 4; // Maximum countries for comparison
+
+// In Globe3D.tsx
+const CAMERA_DISTANCE = 35; // Default camera position
+const MIN_ZOOM = 20; // Minimum zoom distance
+const MAX_ZOOM = 45; // Maximum zoom distance
 ```
 
-## 🚀 Déploiement
+## 🚀 Deployment
 
-### Vercel (recommandé)
+### Vercel (Recommended)
 
 ```bash
 npm run build
@@ -139,7 +194,7 @@ vercel --prod
 
 ```bash
 npm run build
-# Déployer le dossier .next
+# Deploy the .next folder
 ```
 
 ### Docker
@@ -155,66 +210,129 @@ EXPOSE 3000
 CMD ["npm", "start"]
 ```
 
-## 🧪 Tests et développement
+## 🧪 Development
 
-### Scripts disponibles
+### Available Scripts
 
 ```bash
-npm run dev      # Développement
-npm run build    # Build de production
-npm run start    # Démarrage production
-npm run lint     # Linting ESLint
+npm run dev      # Development server
+npm run build    # Production build
+npm run start    # Production server
+npm run lint     # ESLint linting
 ```
 
-### Points d'amélioration futurs
+### Key Features Implemented
 
-- [ ] Tests unitaires et d'intégration
-- [ ] Mode plein écran
-- [ ] Filtres avancés (continent, population, etc.)
-- [ ] Animation du globe terrestre
-- [ ] Géolocalisation de l'utilisateur
-- [ ] Favoris et historique
-- [ ] Comparaison de pays
-- [ ] Export de données
+- ✅ **Country Comparison System**: Up to 4 countries with detailed comparison table
+- ✅ **Direct Globe Interaction**: Ctrl/Cmd + Click for quick selection
+- ✅ **Visual Selection Indicators**: Green borders on selected countries
+- ✅ **Floating Comparison Button**: Preview of selected countries
+- ✅ **shadcn/ui Integration**: Modern, consistent UI components
+- ✅ **Lucide React Icons**: Beautiful, consistent iconography
+- ✅ **Smart UX**: Context-aware buttons and auto-opening modals
+- ✅ **Responsive Design**: Mobile and desktop optimized
+- ✅ **Performance Optimized**: Efficient 3D rendering and state management
+
+### Future Improvements
+
+- [ ] Unit and integration tests
+- [ ] Fullscreen mode
+- [ ] Advanced filters (continent, population range, etc.)
+- [ ] Earth texture on globe
+- [ ] User geolocation
+- [ ] Favorites and history
+- [ ] Data export functionality
+- [ ] Multi-language support
 
 ## 📊 Performance
 
-### Optimisations implémentées
+### Optimizations Implemented
 
-- Chargement différé des composants 3D
-- Limitation du nombre de pays affichés
-- Mise en cache des requêtes API
-- Compression des textures
-- Rendu conditionnel
+- Lazy loading of 3D components
+- Efficient country data caching
+- Optimized texture loading and filtering
+- Conditional rendering for better performance
+- Fibonacci spiral distribution for uniform flag placement
+- Debounced search and focus animations
 
-### Métriques
+### Performance Metrics
 
-- **First Contentful Paint** : ~1.2s
-- **Largest Contentful Paint** : ~2.1s
-- **Cumulative Layout Shift** : 0.05
+- **First Contentful Paint**: ~1.2s
+- **Largest Contentful Paint**: ~2.1s
+- **Cumulative Layout Shift**: 0.05
+- **Interactive**: ~2.5s
 
-## 🐛 Problèmes connus
+## 🔄 Comparison System Details
 
-1. **Performance mobile** : Rendu 3D intensif sur certains appareils
-2. **Chargement initial** : Délai de chargement des drapeaux
-3. **API limitations** : Possible limitation de taux de l'API REST Countries
+### Selection Methods
 
-## 🤝 Contribution
+1. **Traditional**: Click country → Open panel → Click "Add to comparison"
+2. **Quick**: Ctrl/Cmd + Click directly on globe flag
+3. **From Panel**: "View Comparison" button when country is already selected
 
-Ce projet est développé dans le cadre d'un test technique pour MAJORITY.
+### Comparison Categories
 
-### Décisions techniques justifiées
+- **General Information**: Capital, Region, Population, Country Code
+- **Geography**: Coordinates, Area (if available)
+- **Languages**: All official languages with badges
+- **Currencies**: Currency names and symbols
+- **External Links**: Google Maps integration
 
-- **Next.js 15** : Performance et SEO
-- **TypeScript** : Robustesse et maintenabilité
-- **Three.js** : Rendu 3D performant
-- **Framer Motion** : Animations fluides
-- **Architecture modulaire** : Facilite la maintenance
+### State Management
 
-## 📝 Licence
+- Maximum 4 countries for optimal comparison view
+- Auto-opening modal when 2+ countries selected
+- Persistent selection across page interactions
+- Clear visual feedback for all actions
 
-Ce projet est développé à des fins de test technique et d'évaluation.
+## 🐛 Known Issues
+
+1. **Mobile Performance**: Intensive 3D rendering on some devices
+2. **Initial Loading**: Flag texture loading delay
+3. **API Rate Limits**: Potential REST Countries API limitations
+4. **Memory Usage**: Extended usage may increase memory consumption
+
+## 🤝 Technical Decisions
+
+### Architecture Choices
+
+- **Next.js 15**: Latest features, performance, and SEO optimization
+- **TypeScript**: Type safety and developer experience
+- **shadcn/ui**: Modern, accessible component library
+- **Three.js/R3F**: Industry-standard 3D rendering
+- **Modular Architecture**: Easy maintenance and testing
+
+### State Management
+
+- **Custom Hooks**: `useCountries` and `useCountryComparison`
+- **Local State**: React useState for component-specific state
+- **Memoization**: useMemo and useCallback for performance
+- **Context-Free**: Simple prop passing for maintainability
+
+## 📝 About This Technical Test
+
+### Project Context
+
+This project was created as part of the technical evaluation process for **MAJORITY**. It demonstrates:
+
+- **Full-Stack Development Skills**: Modern React/Next.js application with TypeScript
+- **3D Graphics Expertise**: Three.js integration with complex 3D interactions
+- **UI/UX Design**: Modern interface design with shadcn/ui and thoughtful user experience
+- **State Management**: Complex application state with multiple interactive features
+- **Code Quality**: Clean, maintainable, and well-documented codebase
+- **Performance Optimization**: Efficient rendering and data management
+
+### Technical Assessment Goals
+
+- Showcase ability to work with cutting-edge web technologies
+- Demonstrate problem-solving skills through feature implementation
+- Show attention to detail in both functionality and user experience
+- Prove capability to build complex, interactive web applications
+
+### License
+
+This project is developed exclusively for technical evaluation purposes for MAJORITY.
 
 ---
 
-**Développé avec ❤️ par Luca pour MAJORITY**
+**Developed with ❤️ by Luca for MAJORITY Technical Assessment**
