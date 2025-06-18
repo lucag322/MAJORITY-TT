@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { Country, CountryPosition } from "../types/country";
 import { countryService } from "../services/countryService";
+import { useResponsive } from "./useResponsive";
 import {
   useCountryComparison,
   UseCountryComparisonReturn,
@@ -34,6 +35,9 @@ export function useCountries(): UseCountriesReturn {
   const [focusedCountry, setFocusedCountry] = useState<CountryPosition | null>(
     null
   );
+
+  // Hook pour la responsivité
+  const { isMobile } = useResponsive();
 
   // Intégrer la logique de comparaison
   const comparison = useCountryComparison();
@@ -72,9 +76,12 @@ export function useCountries(): UseCountriesReturn {
   const countries = useMemo((): CountryPosition[] => {
     if (allCountries.length === 0) return [];
 
+    // Radius plus grand sur mobile pour espacer les drapeaux
+    const sphereRadius = isMobile ? 15 : 12;
+
     const positions = countryService.generateSpherePositions(
       allCountries.length,
-      12
+      sphereRadius
     );
 
     // Utiliser un seed consistant basé sur le nom du pays pour des rotations reproductibles
@@ -90,7 +97,7 @@ export function useCountries(): UseCountriesReturn {
         ] as [number, number, number],
       };
     });
-  }, [allCountries]);
+  }, [allCountries, isMobile]);
 
   // Filtrer les pays selon la recherche
   const filteredCountries = useMemo((): CountryPosition[] => {

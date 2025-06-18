@@ -25,6 +25,7 @@ const FlagSprite = React.memo(function FlagSprite({
   focusedCountry,
   isSearchResult,
   isInComparison,
+  isMobile = false,
 }: {
   countryPos: CountryPosition;
   onClick: (country: Country) => void;
@@ -35,6 +36,7 @@ const FlagSprite = React.memo(function FlagSprite({
   focusedCountry?: CountryPosition | null;
   isSearchResult: boolean;
   isInComparison: boolean;
+  isMobile?: boolean;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const [texture, setTexture] = useState<THREE.Texture | null>(null);
@@ -100,9 +102,12 @@ const FlagSprite = React.memo(function FlagSprite({
       // Face the camera
       meshRef.current.lookAt(state.camera.position);
 
-      // Scale animation on hover and search highlighting
-      const baseScale = isSearchResult ? 1.2 : 1; // Les résultats de recherche sont plus grands
-      const targetScale = isHovered ? baseScale * 1.5 : baseScale;
+      // Scale animation on hover and search highlighting - simplifié
+      const baseMobileScale = isMobile ? 1.2 : 1; // Légèrement plus grand sur mobile
+      const baseScale = isSearchResult
+        ? baseMobileScale * 1.2
+        : baseMobileScale;
+      const targetScale = isHovered ? baseScale * 1.2 : baseScale;
       setScale((prev) => THREE.MathUtils.lerp(prev, targetScale, 0.1));
       meshRef.current.scale.setScalar(scale);
 
@@ -118,6 +123,10 @@ const FlagSprite = React.memo(function FlagSprite({
   if (!texture) {
     return null;
   }
+
+  // Taille normale mais avec zones de clic étendues sur mobile
+  const flagWidth = isMobile ? 1.1 : 1; // Juste un peu plus grand
+  const flagHeight = isMobile ? 0.7 : 0.6;
 
   return (
     <>
@@ -138,13 +147,20 @@ const FlagSprite = React.memo(function FlagSprite({
         onPointerOver={isInForeground ? onHover : undefined}
         onPointerOut={isInForeground ? onUnhover : undefined}
       >
-        <planeGeometry args={[1, 0.6]} />
+        <planeGeometry args={[flagWidth, flagHeight]} />
         <meshBasicMaterial
           map={texture}
           side={THREE.DoubleSide}
           transparent
           alphaTest={0.1}
         />
+        {/* Zone de clic invisible large sur mobile pour faciliter le tap */}
+        {isMobile && (
+          <mesh position={[0, 0, -0.001]} visible={false}>
+            <planeGeometry args={[flagWidth * 3, flagHeight * 3]} />
+            <meshBasicMaterial transparent opacity={0} />
+          </mesh>
+        )}
         {/* Bordure pour les pays en comparaison */}
         {isInComparison && (
           <mesh position={[0, 0, 0.001]}>
@@ -162,14 +178,29 @@ const FlagSprite = React.memo(function FlagSprite({
   );
 });
 
-// Composant Globe invisible
-function InvisibleGlobe() {
+// Composant Globe visible - responsive
+function GlobeBackground({ isMobile = false }: { isMobile?: boolean }) {
   const meshRef = useRef<THREE.Mesh>(null);
+
+  useEffect(() => {
+    if (meshRef.current) {
+      // Render order négatif pour s'assurer que le globe apparaît derrière les drapeaux
+      meshRef.current.renderOrder = -1;
+    }
+  }, []);
+
+  // Adapter la taille du globe de fond au rayon des drapeaux
+  const globeRadius = isMobile ? 14.8 : 11.5; // Légèrement ajusté pour mobile
 
   return (
     <mesh ref={meshRef}>
-      <sphereGeometry args={[9.5, 32, 16]} />
-      <meshBasicMaterial transparent opacity={0.02} color="#4FFFEF" wireframe />
+      <sphereGeometry args={[globeRadius, 32, 16]} />
+      <meshBasicMaterial
+        transparent
+        opacity={0.3}
+        color="#4FFFEF"
+        wireframe={true}
+      />
     </mesh>
   );
 }
@@ -182,6 +213,7 @@ function Globe3DScene({
   isCountryInComparison,
   focusedCountry,
   searchResults = [],
+  isMobile = false,
 }: {
   countries: CountryPosition[];
   onCountryClick: (country: Country) => void;
@@ -189,6 +221,7 @@ function Globe3DScene({
   isCountryInComparison: (countryCode: string) => boolean;
   focusedCountry?: CountryPosition | null;
   searchResults?: CountryPosition[];
+  isMobile?: boolean;
 }) {
   const [hoveredCountry, setHoveredCountry] = useState<string | null>(null);
   const { camera } = useThree();
@@ -219,10 +252,11 @@ function Globe3DScene({
   const debouncedFocusedCountry = useDebounce(focusedCountry, 300); // 300ms de délai
 
   useEffect(() => {
-    // Position initiale de la caméra - toujours fixe
-    camera.position.set(0, 25, 15);
+    // Position initiale de la caméra - plus proche pour faciliter le clic
+    const cameraDistance = isMobile ? 28 : 25; // Plus proche sur mobile
+    camera.position.set(0, cameraDistance, 15);
     camera.lookAt(0, 0, 0);
-  }, [camera]);
+  }, [camera, isMobile]);
 
   // Faire tourner la caméra vers le pays focalisé (avec debounce)
   useEffect(() => {
@@ -275,8 +309,8 @@ function Globe3DScene({
       <ambientLight intensity={0.8} />
       <pointLight position={[10, 10, 10]} intensity={1} />
 
-      {/* Globe invisible */}
-      <InvisibleGlobe />
+      {/* Globe de fond */}
+      <GlobeBackground isMobile={isMobile} />
 
       {/* Drapeaux */}
       {countries.map((countryPos, index) => {
@@ -294,26 +328,31 @@ function Globe3DScene({
             focusedCountry={focusedCountry}
             isSearchResult={searchResultsSet.has(countryPos.country.cca2)}
             isInComparison={isCountryInComparison(countryPos.country.cca2)}
+            isMobile={isMobile}
           />
         );
       })}
 
-      {/* Contrôles de caméra */}
+      {/* Contrôles de caméra - optimisés pour faciliter le clic */}
       <OrbitControls
         ref={orbitControlsRef}
         enablePan={false}
         enableZoom={true}
         enableRotate={true}
-        minDistance={20}
-        maxDistance={45}
+        minDistance={isMobile ? 22 : 20}
+        maxDistance={isMobile ? 55 : 45}
         autoRotate={false}
-        autoRotateSpeed={0.5}
+        autoRotateSpeed={0.3}
         target={[0, 0, 0]}
         mouseButtons={{
           LEFT: THREE.MOUSE.ROTATE,
           MIDDLE: THREE.MOUSE.DOLLY,
           RIGHT: undefined,
         }}
+        enableDamping={true}
+        dampingFactor={0.1}
+        rotateSpeed={isMobile ? 0.8 : 1.0}
+        zoomSpeed={isMobile ? 0.8 : 1.0}
       />
     </>
   );
@@ -329,6 +368,7 @@ interface Globe3DProps {
   canvasClassName?: string;
   focusedCountry?: CountryPosition | null;
   searchResults?: CountryPosition[];
+  isMobile?: boolean;
 }
 
 export default function Globe3D({
@@ -340,6 +380,7 @@ export default function Globe3D({
   canvasClassName = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
   focusedCountry,
   searchResults = [],
+  isMobile = false,
 }: Globe3DProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -378,6 +419,7 @@ export default function Globe3D({
           isCountryInComparison={isCountryInComparison}
           focusedCountry={focusedCountry}
           searchResults={searchResults}
+          isMobile={isMobile}
         />
       </Canvas>
     </div>

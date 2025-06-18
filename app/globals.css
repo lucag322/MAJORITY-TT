@@ -116,7 +116,185 @@
   * {
     @apply border-border outline-ring/50;
   }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+  }
+
   body {
     @apply bg-background text-foreground;
+    /* Prevents zooming on iOS when selecting inputs */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Éliminer complètement les marges sur mobile */
+  @media (max-width: 767px) {
+    html,
+    body {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    #__next,
+    main {
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100vw !important;
+    }
+
+    /* Forcer le canvas Three.js à prendre toute la largeur */
+    canvas {
+      width: 100vw !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+  }
+
+  /* Improved touch targets for mobile */
+  button,
+  [role="button"],
+  input[type="submit"],
+  input[type="button"] {
+    @apply min-h-[44px] sm:min-h-[auto];
+  }
+
+  /* Better scrolling on mobile */
+  .overflow-y-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Disable text selection on interactive elements for better mobile UX */
+  .pointer-events-none {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+  }
+
+  /* Prevent zoom on mobile */
+  @media (max-width: 768px) {
+    * {
+      touch-action: manipulation;
+    }
+
+    input,
+    textarea,
+    select {
+      font-size: 16px !important;
+    }
+
+    html {
+      touch-action: pan-x pan-y;
+    }
+
+    body {
+      overflow-x: hidden;
+      touch-action: pan-x pan-y;
+    }
+  }
+}
+
+@layer utilities {
+  /* Custom responsive utilities */
+  .responsive-padding {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+
+  .responsive-margin {
+    @apply mx-4 sm:mx-6 lg:mx-8;
+  }
+
+  /* Mobile-first breakpoints for better performance */
+  .mobile-only {
+    @apply block sm:hidden;
+  }
+
+  .tablet-up {
+    @apply hidden sm:block;
+  }
+
+  .desktop-up {
+    @apply hidden lg:block;
+  }
+
+  /* Safe area support for modern mobile devices - remove for full screen */
+  .safe-area-padding {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    /* Remove left and right safe area for full width */
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* Full width utility for mobile */
+  .mobile-full-width {
+    @media (max-width: 767px) {
+      width: 100vw !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+  }
+
+  /* Z-index hierarchy for UI elements */
+  .z-background {
+    z-index: 0;
+  }
+
+  .z-globe {
+    z-index: 10;
+  }
+
+  .z-ui-base {
+    z-index: 20; /* Titre, statistiques */
+  }
+
+  .z-ui-overlay {
+    z-index: 30; /* Instructions */
+  }
+
+  .z-search-bar {
+    z-index: 40; /* Barre de recherche */
+  }
+
+  .z-floating-buttons {
+    z-index: 45; /* Boutons flottants */
+  }
+
+  .z-panels {
+    z-index: 50; /* Panneaux latéraux */
+  }
+
+  .z-modals {
+    z-index: 60; /* Modales */
+  }
+
+  .z-notifications {
+    z-index: 70; /* Notifications/Toasts */
+  }
+
+  .z-critical {
+    z-index: 9999; /* Éléments critiques (loading, erreurs) */
+  }
+}
+
+/* Custom animations for better mobile performance */
+@media (prefers-reduced-motion: no-preference) {
+  .animate-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* Improve performance on mobile by reducing animations */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
